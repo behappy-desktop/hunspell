@@ -105,6 +105,7 @@
 using namespace mozilla;
 #endif
 
+#ifndef MOZILLA_CLIENT
 void myopen(std::ifstream& stream, const char* path, std::ios_base::openmode mode)
 {
 #if defined(_WIN32) && defined(_MSC_VER)
@@ -124,6 +125,7 @@ void myopen(std::ifstream& stream, const char* path, std::ios_base::openmode mod
 #endif
   stream.open(path, mode);
 }
+#endif
 
 std::string& u16_u8(std::string& dest, const std::vector<w_char>& src) {
   dest.clear();
