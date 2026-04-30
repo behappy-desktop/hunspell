@@ -113,7 +113,7 @@ public:
   int add_with_affix(const std::string& word, const std::string& example);
   int remove(const std::string& word);
   const std::string& get_version_cpp() const;
-  const struct cs_info* get_csconv() const;
+  struct cs_info* get_csconv();
 
   int spell(const char* word, int* info = NULL, char** root = NULL);
   int suggest(char*** slst, const char* word);
@@ -1523,8 +1523,11 @@ const std::string& HunspellImpl::get_version_cpp() const {
   return pAMgr->get_version();
 }
 
-const struct cs_info* HunspellImpl::get_csconv() const {
-  return csconv;
+struct cs_info* HunspellImpl::get_csconv() {
+  // Preserve pre-1.7.3 ABI: returned pointer is now to read-only data,
+  // but the public signature still says non-const. Callers must not
+  // write through it.
+  return const_cast<struct cs_info*>(csconv);
 }
 
 void HunspellImpl::cat_result(std::string& result, const std::string& st) {
@@ -2205,7 +2208,7 @@ const std::string& Hunspell::get_version_cpp() const {
   return m_Impl->get_version_cpp();
 }
 
-const struct cs_info* Hunspell::get_csconv() const {
+struct cs_info* Hunspell::get_csconv() {
   return m_Impl->get_csconv();
 }
 
