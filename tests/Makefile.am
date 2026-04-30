@@ -156,7 +156,8 @@ gh646.test \
 ofz51432.test \
 ofz5627151457255424.test \
 gh1095.test \
-compound_wnum_overflow.test
+compound_wnum_overflow.test \
+abi-check.sh
 
 clean-local:
 	-rm -rf testSubDir
@@ -722,4 +723,6 @@ ofz5627151457255424.test \
 gh1095.aff \
 gh1095.dic \
 gh1095.test \
-utf8_nonbmp.test
+utf8_nonbmp.test \
+abi-check.sh \
+abi-baseline.txt
