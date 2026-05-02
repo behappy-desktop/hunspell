@@ -860,10 +860,11 @@ bool HashMgr::decode_flags(std::vector<unsigned short>& result, const std::strin
         HUNSPELL_WARNING(stderr, "error: line %d: bad flagvector\n",
                          af->getlinenum());
       len >>= 1;
-      result.reserve(result.size() + len);
+      size_t origsize = result.size();
+      result.resize(origsize + len);
       for (size_t i = 0; i < len; ++i) {
-        result.push_back(((unsigned short)((unsigned char)flags[i << 1]) << 8) |
-		                 ((unsigned short)((unsigned char)flags[(i << 1) | 1])));
+        result[origsize + i] = ((unsigned short)((unsigned char)flags[i << 1]) << 8) |
+		                       ((unsigned short)((unsigned char)flags[(i << 1) | 1]));
       }
       break;
     }
