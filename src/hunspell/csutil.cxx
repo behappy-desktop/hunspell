@@ -564,7 +564,7 @@ unsigned char ccase(const struct cs_info* csconv, int nIndex) {
 
 w_char upper_utf(w_char u, int langnum) {
 	
-#if defined(__i386__) || defined(_M_IX86) || defined(_M_X64)
+#if defined(_WIN32) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__))  || defined(__LITTLE_ENDIAN__)
 
 //with these optimizations, msvc can optimize this function to one jmp instruction
 //but g++ remains in five instructions
@@ -588,7 +588,7 @@ w_char upper_utf(w_char u, int langnum) {
 
 w_char lower_utf(w_char u, int langnum) {
 	
-#if defined(__i386__) || defined(_M_IX86) || defined(_M_X64)
+#if defined(_WIN32) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__))  || defined(__LITTLE_ENDIAN__)
 
 //with these optimizations, msvc can optimize this function to one jmp instruction
 //but g++ remains in five instructions

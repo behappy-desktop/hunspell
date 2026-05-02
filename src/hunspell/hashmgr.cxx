@@ -825,7 +825,7 @@ int HashMgr::decode_flags(unsigned short** result, const std::string& flags, Fil
       u8_u16(w, flags);
       len = w.size();
       *result = new unsigned short[len];
-#if defined(__i386__) || defined(_M_IX86) || defined(_M_X64)
+#if defined(_WIN32) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__))  || defined(__LITTLE_ENDIAN__)
       memcpy(*result, w.data(), len * sizeof(unsigned short));
 #else
       unsigned short* dest = *result;
@@ -903,7 +903,7 @@ bool HashMgr::decode_flags(std::vector<unsigned short>& result, const std::strin
       std::vector<w_char> w;
       u8_u16(w, flags);
       size_t len = w.size(), origsize = result.size();
-#if defined(__i386__) || defined(_M_IX86) || defined(_M_X64)
+#if defined(_WIN32) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__))  || defined(__LITTLE_ENDIAN__)
       result.resize(origsize + len);
       memcpy(result.data() + origsize, w.data(), len * sizeof(short));
 #else
@@ -965,7 +965,7 @@ std::string HashMgr::encode_flag(unsigned short f) const {
     ch = std::to_string(f); 
   } else if (flag_mode == FLAG_UNI) {
 
-#if defined(__i386__) || defined(_M_IX86) || defined(_M_X64)
+#if defined(_WIN32) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__))  || defined(__LITTLE_ENDIAN__)
 
 #if __cplusplus >= 202002L || (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L)
     auto wc = std::bit_cast<w_char>(f);
