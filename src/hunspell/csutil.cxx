@@ -199,7 +199,7 @@ int u8_u16(std::vector<w_char>& dest, const std::string& src, bool only_convert_
       }
       case 0xc0:
       case 0xd0: {  // 2-byte UTF-8 codes
-        if ((*(u8 + 1) & 0xc0) == 0x80) {
+        if (u8 + 1 < u8_max && (*(u8 + 1) & 0xc0) == 0x80) {
           u2.h = (*u8 & 0x1f) >> 2;
           u2.l = (static_cast<unsigned char>(*u8) << 6) + (*(u8 + 1) & 0x3f);
           ++u8;
@@ -215,10 +215,10 @@ int u8_u16(std::vector<w_char>& dest, const std::string& src, bool only_convert_
         break;
       }
       case 0xe0: {  // 3-byte UTF-8 codes
-        if ((*(u8 + 1) & 0xc0) == 0x80) {
+        if (u8 + 1 < u8_max && (*(u8 + 1) & 0xc0) == 0x80) {
           u2.h = ((*u8 & 0x0f) << 4) + ((*(u8 + 1) & 0x3f) >> 2);
           ++u8;
-          if ((*(u8 + 1) & 0xc0) == 0x80) {
+          if (u8 + 1 < u8_max && (*(u8 + 1) & 0xc0) == 0x80) {
             u2.l = (static_cast<unsigned char>(*u8) << 6) + (*(u8 + 1) & 0x3f);
             ++u8;
           } else {
