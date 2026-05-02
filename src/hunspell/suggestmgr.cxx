@@ -447,6 +447,8 @@ int SuggestMgr::map_related(const std::string& word,
                             clock_t* timelimit,
                             int depth, int& info) {
   if (word.size() == wn) {
+    if (candidate == word)
+      return wlst.size();
     const int cwrd = std::find(wlst.begin(), wlst.end(), candidate) != wlst.end() ? 0 : 1;
     if ((cwrd) && checkword(candidate, cpdsuggest, timer, timelimit)) {
       if (wlst.size() < maxSug) {
@@ -1033,7 +1035,7 @@ int SuggestMgr::longswapchar(std::vector<std::string>& wlst,
   for (auto p = candidate.begin(); p < candidate.end(); ++p) {
     for (auto q = candidate.begin(); q < candidate.end(); ++q) {
       const auto distance = std::abs(std::distance(q, p));
-      if (distance > 1 && distance <= MAX_CHAR_DISTANCE) {
+      if (distance > 1 && distance <= MAX_CHAR_DISTANCE && *p != *q) {
         std::swap(*p, *q);
         testsug(wlst, candidate, cpdsuggest, NULL, NULL, info);
         std::swap(*p, *q);
@@ -1052,7 +1054,7 @@ int SuggestMgr::longswapchar_utf(std::vector<std::string>& wlst,
   for (auto p = candidate_utf.begin(); p < candidate_utf.end(); ++p) {
     for (auto q = candidate_utf.begin(); q < candidate_utf.end(); ++q) {
       const auto distance = std::abs(std::distance(q, p));
-      if (distance > 1 && distance <= MAX_CHAR_DISTANCE) {
+      if (distance > 1 && distance <= MAX_CHAR_DISTANCE && *p != *q) {
         std::swap(*p, *q);
         std::string candidate;
         u16_u8(candidate, candidate_utf);

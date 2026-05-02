@@ -4,9 +4,11 @@ SUBDIRS = suggestiontest
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/hunspell
 
-check_PROGRAMS = gh1032
+check_PROGRAMS = gh1032 gh1058
 gh1032_SOURCES = gh1032.cxx
 gh1032_LDADD = $(top_builddir)/src/hunspell/libhunspell-1.7.la
+gh1058_SOURCES = gh1058.cxx
+gh1058_LDADD = $(top_builddir)/src/hunspell/libhunspell-1.7.la
 
 TEST_EXTENSIONS = .dic
 AM_TESTS_ENVIRONMENT = export HUNSPELL=$(top_builddir)/src/tools/hunspell; \
@@ -148,6 +150,7 @@ limit-multiple-compounding.dic \
 iconv_break_overflow.dic \
 gh1076.dic \
 gh1032.test \
+gh1058.test \
 gh-hunzip-overflow.test \
 gh1086.test \
 gh1018.test \
@@ -692,6 +695,10 @@ gh1032.cxx \
 gh1032.aff \
 gh1032.dic \
 gh1032.test \
+gh1058.cxx \
+gh1058.aff \
+gh1058.dic \
+gh1058.test \
 gh-hunzip-overflow.aff.hz \
 gh-hunzip-overflow.dic \
 gh-hunzip-overflow.test \
