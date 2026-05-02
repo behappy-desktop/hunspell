@@ -1608,7 +1608,7 @@ struct hentry* AffixMgr::compound_check(const std::string& word,
   // get the current time
   std::chrono::steady_clock::time_point clock_now = std::chrono::steady_clock::now();
 
-  if (wordnum == 0) {
+  if (wnum == 0) {
       // set the start time
       clock_time_start = clock_now;
       timelimit_exceeded = false;
@@ -2243,7 +2243,7 @@ int AffixMgr::compound_check_morph(const std::string& word,
   // get the current time
   std::chrono::steady_clock::time_point clock_now = std::chrono::steady_clock::now();
 
-  if (wordnum == 0) {
+  if (wnum == 0) {
       // set the start time
       clock_time_start = clock_now;
       timelimit_exceeded = false;
