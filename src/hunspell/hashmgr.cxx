@@ -903,12 +903,12 @@ bool HashMgr::decode_flags(std::vector<unsigned short>& result, const std::strin
       std::vector<w_char> w;
       u8_u16(w, flags);
       size_t len = w.size(), origsize = result.size();
-#if defined(_WIN32) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__))  || defined(__LITTLE_ENDIAN__)
       result.resize(origsize + len);
+#if defined(_WIN32) || (defined(__BYTE_ORDER__) && (__BYTE_ORDER__==__ORDER_LITTLE_ENDIAN__))  || defined(__LITTLE_ENDIAN__)
       memcpy(result.data() + origsize, w.data(), len * sizeof(short));
 #else
-      result.reserve(origsize + len);
-      for (const w_char wc : w) result.push_back((unsigned short)wc);
+      for (size_t i = 0; i < len; ++i)
+        result[origsize + i] = (unsigned short)w[i];
 #endif
       break;
     }
