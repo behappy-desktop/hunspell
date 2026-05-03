@@ -139,10 +139,14 @@ Then run:
 Download Msys2, update everything and install the following
     packages:
 
-    pacman -S base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-libtool
+    pacman -S base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-libtool \
+              mingw-w64-x86_64-libiconv mingw-w64-x86_64-gettext
 
 Open Mingw-w64 Win64 prompt and compile the same way as on Linux, see
-above.
+above. Without `mingw-w64-x86_64-libiconv` the build still succeeds but
+the `hunspell` tool cannot convert between dictionary encodings, so any
+test or dictionary that declares a non-UTF-8 `SET` (e.g. ISO8859-1/2/15)
+will fail at runtime.
 
 ## Compiling in Cygwin environment
 
