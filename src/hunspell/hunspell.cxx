@@ -1056,12 +1056,22 @@ std::vector<std::string> HunspellImpl::suggest(const std::string& word, std::vec
   // output conversion
   RepList* rl = (pAMgr) ? pAMgr->get_oconvtable() : NULL;
   if (rl) {
-    for (size_t i = 0; rl && i < slst.size(); ++i) {
+    size_t l = 0;
+    for (size_t i = 0; i < slst.size(); ++i) {
       std::string wspace;
       if (rl->conv(slst[i], wspace)) {
         slst[i] = wspace;
       }
+      // gh#1002: OCONV can map a generated form back to the input word
+      // (e.g. "románórum" -> "romanórum" when the user typed "romanórum"),
+      // leaving the misspelled word as its own suggestion.
+      if (slst[i] == word)
+        continue;
+      if (l != i)
+        slst[l] = std::move(slst[i]);
+      ++l;
     }
+    slst.resize(l);
   }
   return slst;
 }

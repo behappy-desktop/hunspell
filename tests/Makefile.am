@@ -151,6 +151,7 @@ iconv_break_overflow.dic \
 gh1076.dic \
 gh1032.test \
 gh1058.test \
+gh1002.dic \
 gh-hunzip-overflow.test \
 gh1086.test \
 gh1018.test \
@@ -699,6 +700,10 @@ gh1058.cxx \
 gh1058.aff \
 gh1058.dic \
 gh1058.test \
+gh1002.aff \
+gh1002.dic \
+gh1002.wrong \
+gh1002.sug \
 gh-hunzip-overflow.aff.hz \
 gh-hunzip-overflow.dic \
 gh-hunzip-overflow.test \
