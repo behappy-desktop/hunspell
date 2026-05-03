@@ -88,10 +88,10 @@
 #include "csutil.hxx"
 
 AffixMgr::AffixMgr(const char* affpath,
-                   const std::vector<HashMgr*>& ptr,
+                   const std::vector<std::unique_ptr<HashMgr>>& ptr,
                    const char* key)
   : alldic(ptr)
-  , pHMgr(ptr[0]) {
+  , pHMgr(ptr[0].get()) {
 
   // register hash manager and load affix data from aff file
   csconv = NULL;

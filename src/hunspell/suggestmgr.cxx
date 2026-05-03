@@ -1172,7 +1172,7 @@ namespace
 // generate a set of suggestions for very poorly spelled words
 void SuggestMgr::ngsuggest(std::vector<std::string>& wlst,
                           const char* w,
-                          const std::vector<HashMgr*>& rHMgr,
+                          const std::vector<std::unique_ptr<HashMgr>>& rHMgr,
                           int captype) {
   int lval, sc, lp, lpphon, nonbmp = 0;
 

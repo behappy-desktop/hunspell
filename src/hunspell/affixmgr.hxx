@@ -73,6 +73,7 @@
 
 #include <cstdio>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -94,7 +95,7 @@ class AffixMgr {
   SfxEntry* sStart[SETSIZE];
   PfxEntry* pFlag[SETSIZE];
   SfxEntry* sFlag[SETSIZE];
-  const std::vector<HashMgr*>& alldic;
+  const std::vector<std::unique_ptr<HashMgr>>& alldic;
   const HashMgr* pHMgr;
   std::string keystring;
   std::string trystring;
@@ -174,7 +175,7 @@ class AffixMgr {
                                // affix)
 
  public:
-  AffixMgr(const char* affpath, const std::vector<HashMgr*>& ptr, const char* key = NULL);
+  AffixMgr(const char* affpath, const std::vector<std::unique_ptr<HashMgr>>& ptr, const char* key = NULL);
   ~AffixMgr();
   struct hentry* affix_check(const std::string& word,
                              int start,

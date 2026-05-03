@@ -80,6 +80,7 @@
 #include "csutil.hxx"
 
 #include <limits>
+#include <memory>
 #include <string>
 
 #define MAXWORDUTF8LEN (MAXWORDLEN * 3)
@@ -130,9 +131,9 @@ public:
   int input_conv(const char* word, char* dest, size_t destsize);
 
 private:
-  AffixMgr* pAMgr;
-  std::vector<HashMgr*> m_HMgrs;
-  SuggestMgr* pSMgr;
+  std::vector<std::unique_ptr<HashMgr>> m_HMgrs;
+  std::unique_ptr<AffixMgr> pAMgr; // pAMgr depends on m_HMgrs
+  std::unique_ptr<SuggestMgr> pSMgr; // pSMgr depends on pAMgr
   std::string affixpath;
   std::string encoding;
   const struct cs_info* csconv;
@@ -186,11 +187,11 @@ HunspellImpl::HunspellImpl(const char* affpath, const char* dpath, const char* k
   complexprefixes = 0;
 
   /* first set up the hash manager */
-  m_HMgrs.push_back(new HashMgr(dpath, affpath, key));
+  m_HMgrs.push_back(std::unique_ptr<HashMgr>(new HashMgr(dpath, affpath, key)));
 
   /* next set up the affix manager */
   /* it needs access to the hash manager lookup methods */
-  pAMgr = new AffixMgr(affpath, m_HMgrs, key);
+  pAMgr.reset(new AffixMgr(affpath, m_HMgrs, key));
 
   /* get the preferred try string and the dictionary */
   /* encoding from the Affix Manager for that dictionary */
@@ -204,16 +205,10 @@ HunspellImpl::HunspellImpl(const char* affpath, const char* dpath, const char* k
   wordbreak = pAMgr->get_breaktable();
 
   /* and finally set up the suggestion manager */
-  pSMgr = new SuggestMgr(try_string, MAXSUGGESTION, pAMgr);
+  pSMgr.reset(new SuggestMgr(try_string, MAXSUGGESTION, pAMgr.get()));
 }
 
 HunspellImpl::~HunspellImpl() {
-  delete pSMgr;
-  delete pAMgr;
-  for (auto& m_HMgr : m_HMgrs)
-    delete m_HMgr;
-  pSMgr = NULL;
-  pAMgr = NULL;
 #ifdef MOZILLA_CLIENT
   delete[] csconv;
 #endif
@@ -222,7 +217,7 @@ HunspellImpl::~HunspellImpl() {
 
 // load extra dictionaries
 int HunspellImpl::add_dic(const char* dpath, const char* key) {
-  m_HMgrs.push_back(new HashMgr(dpath, affixpath.c_str(), key));
+  m_HMgrs.push_back(std::unique_ptr<HashMgr>(new HashMgr(dpath, affixpath.c_str(), key)));
   return 0;
 }
 
