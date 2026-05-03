@@ -978,7 +978,7 @@ std::vector<std::string> HunspellImpl::suggest(const std::string& word, std::vec
   std::vector<std::string> spell_candidate_stack;
   suggest_candidate_stack.push_back(word);
   std::vector<std::string> slst = suggest_internal(word, spell_candidate_stack, suggest_candidate_stack,
-		                                   capwords, abbv, captype, suggest_start);
+                                                   capwords, abbv, captype, suggest_start);
   suggest_candidate_stack.pop_back();
   // word reversing wrapper for complex prefixes
   if (complexprefixes) {
@@ -999,7 +999,7 @@ std::vector<std::string> HunspellImpl::suggest(const std::string& word, std::vec
   // expand suggestions with dot(s)
   if (abbv && pAMgr && pAMgr->get_sugswithdots() && word.size() >= abbv) {
     for (auto& j : slst) {
-	    j.append(word.substr(word.size() - abbv));
+      j.append(word.substr(word.size() - abbv));
     }
   }
 
@@ -1283,9 +1283,9 @@ std::vector<std::string> HunspellImpl::suggest_internal(const std::string& word,
         w.append(j.substr(pos + 1));
         (void)spell(w, spell_candidate_stack, &info, NULL, suggest_start);
         if ((info & SPELL_COMPOUND) && (info & SPELL_FORBIDDEN)) {
-	        j[pos] = ' ';
+          j[pos] = ' ';
         } else
-	        j[pos] = '-';
+          j[pos] = '-';
       }
     }
   }
@@ -1426,7 +1426,7 @@ std::vector<std::string> HunspellImpl::stem(const std::vector<std::string>& desc
         // remove inflectional suffixes
         const size_t is = k.find(MORPH_INFL_SFX);
         if (is != std::string::npos)
-	        k.resize(is);
+          k.resize(is);
         std::vector<std::string> singlepl;
         singlepl.push_back(k);
         std::string sg = pSMgr->suggest_gen(singlepl, k);

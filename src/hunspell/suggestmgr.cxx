@@ -145,7 +145,7 @@ SuggestMgr::SuggestMgr(const std::string& tryme, unsigned int maxn, AffixMgr* ap
   // language with possible dash usage
   // (latin letters or dash in TRY characters)
   lang_with_dash_usage = ctry.find('-') != std::string::npos ||
-	                 ctry.find('a') != std::string::npos;
+                         ctry.find('a') != std::string::npos;
 }
 
 SuggestMgr::~SuggestMgr() {
@@ -1996,10 +1996,10 @@ std::string SuggestMgr::suggest_gen(const std::vector<std::string>& desc, const 
         // remove inflectional and terminal suffixes
         size_t is = i.find(MORPH_INFL_SFX);
         if (is != std::string::npos)
-	        i.resize(is);
+          i.resize(is);
         size_t ts = i.find(MORPH_TERM_SFX);
         while (ts != std::string::npos) {
-	        i[ts] = '_';
+          i[ts] = '_';
           ts = i.find(MORPH_TERM_SFX);
         }
         const char* st = strstr(s, MORPH_STEM);
@@ -2131,7 +2131,7 @@ int SuggestMgr::leftcommonsubstring(
       return 1;
   } else {
     unsigned short idx = su2.empty() ? 0 : (unsigned short)(su2[0]),
-  	               otheridx = su1.empty() ? 0 : (unsigned short)(su1[0]);
+                   otheridx = su1.empty() ? 0 : (unsigned short)(su1[0]);
     if (otheridx != idx && (otheridx != unicodetolower(idx, langnum)))
       return 0;
     int i;

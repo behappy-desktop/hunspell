@@ -299,7 +299,7 @@ int parse_aff_file(FILE* afflst) {
             stable[numsfx].num = numents;
             fprintf(stderr, "stable %d num is %d flag %c\n", numsfx,
                     stable[numsfx].num, ptr->achar);
-	    numsfx++;
+            numsfx++;
           } else {
             fprintf(stderr, "suffix buffer stable is full\n");
             free(ptr);

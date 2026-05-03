@@ -421,7 +421,7 @@ bool copy_field(std::string& dest,
   std::string beg(morph.substr(pos + MORPH_TAG_LEN, std::string::npos));
 
   for (const char c : beg) {
-	if (c == ' ' || c == '\t' || c == '\n')
+    if (c == ' ' || c == '\t' || c == '\n')
       break;
     dest.push_back(c);
   }
@@ -480,7 +480,7 @@ size_t reverseword_utf(std::string& word) {
         break;
       case 0xc0:
       case 0xd0: {
-	//two bytes
+        //two bytes
         if (num_chars >= 2) {
           std::iter_swap(it, it + 1);
           it += 2;
@@ -649,7 +649,7 @@ std::string& mkinitcap(std::string& s, const struct cs_info* csconv) {
 
 std::vector<w_char>& mkinitcap_utf(std::vector<w_char>& u, int langnum) {
   if (!u.empty()) {
-	u[0] = upper_utf(u[0], langnum);
+    u[0] = upper_utf(u[0], langnum);
   }
   return u;
 }
@@ -663,7 +663,7 @@ std::string& mkinitsmall(std::string& s, const struct cs_info* csconv) {
 
 std::vector<w_char>& mkinitsmall_utf(std::vector<w_char>& u, int langnum) {
   if (!u.empty()) {
-	u[0] = lower_utf(u[0], langnum);
+    u[0] = lower_utf(u[0], langnum);
   }
   return u;
 }

@@ -1674,8 +1674,8 @@ struct hentry* AffixMgr::compound_check(const std::string& word,
           cmax = len - cpdmin + 1;
         }
 
-	if (i >= st.size())
-	    return NULL;
+        if (i >= st.size())
+          return NULL;
 
         ch = st[i];
         st[i] = '\0';
@@ -4157,7 +4157,7 @@ bool AffixMgr::parse_defcpdtable(const std::string& line, FileMgr* af) {
             for (auto k = start_piece; k != iter; ++k) {
               auto chb = k, che = k + 1;
               if (*k == '(') {
-	            auto parpos = std::find(k, iter, ')');
+                auto parpos = std::find(k, iter, ')');
                 if (parpos != iter) {
                   chb = k + 1;
                   che = parpos;

@@ -595,7 +595,7 @@ inline int SfxEntry::test_condition(const char* st, const char* beg) {
             ingroup = true;
             while (p && *p != ']' && ((p = nextchar(p)) != NULL)) {
             }
-            //			if (p && *p != ']') p = nextchar(p);
+            // if (p && *p != ']') p = nextchar(p);
             st--;
           }
           if (!pos) {

@@ -81,7 +81,7 @@ static struct {
                {{"\\verb*", "*"}, 0},
                {{"\\documentstyle", "\\begin{document}"}, 0},
                {{"\\documentclass", "\\begin{document}"}, 0},
-               //	{ { "\\documentclass", NULL } , 1 },
+               // { { "\\documentclass", NULL } , 1 },
                {{"\\usepackage", NULL}, 1},
                {{"\\includeonly", NULL}, 1},
                {{"\\include", NULL}, 1},

@@ -157,7 +157,7 @@ class AffixMgr {
   std::string ignorechars; // letters + spec. word characters
   std::vector<w_char> ignorechars_utf16;
   std::string version;   // affix and dictionary file version string
-  std::string lang;	 // language
+  std::string lang; // language
   int langnum;
   FLAG lemma_present;
   FLAG circumfix;

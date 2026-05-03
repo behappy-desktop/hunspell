@@ -799,7 +799,7 @@ int HashMgr::decode_flags(unsigned short** result, const std::string& flags, Fil
                 stderr, "error: line %d: flag id %d is out of range\n",
                 af->getlinenum(), i);
              i = 0;
-	  }
+          }
           *dest = (unsigned short)i;
           if (*dest == 0 && af != NULL)
             HUNSPELL_WARNING(stderr, "error: line %d: 0 is wrong flag id\n",
@@ -865,7 +865,7 @@ bool HashMgr::decode_flags(std::vector<unsigned short>& result, const std::strin
       result.resize(origsize + len);
       for (size_t i = 0; i < len; ++i) {
         result[origsize + i] = ((unsigned short)((unsigned char)flags[i << 1]) << 8) |
-		                       ((unsigned short)((unsigned char)flags[(i << 1) | 1]));
+                               ((unsigned short)((unsigned char)flags[(i << 1) | 1]));
       }
       break;
     }
@@ -880,7 +880,7 @@ bool HashMgr::decode_flags(std::vector<unsigned short>& result, const std::strin
                 stderr, "error: line %d: flag id %d is out of range\n",
                 af->getlinenum(), i);
             i = 0;
-	  }
+          }
           result.push_back((unsigned short)i);
           if (result.back() == 0)
             HUNSPELL_WARNING(stderr, "error: line %d: 0 is wrong flag id\n",
