@@ -301,8 +301,7 @@ void TextParser::set_url_checking(int check) {
 }
 
 bool TextParser::alloc_token(size_t tokn, size_t* hd, std::string& t) {
-  size_t url_head = *hd;
-  if (get_url(tokn, &url_head))
+  if (get_url(tokn, hd))
     return false;
   t = line[actual].substr(tokn, *hd - tokn);
   // remove colon for Finnish and Swedish language
