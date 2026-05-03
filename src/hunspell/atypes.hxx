@@ -98,16 +98,12 @@ static inline void HUNSPELL_WARNING(FILE*, const char*, ...) {}
 
 #define TESTAFF(a, b, c) (std::binary_search(a, a + c, b))
 
-// timelimit: max. ~1/4 sec (process time on Linux) for
-// for a suggestion, including max. ~/10 sec for a case
-// sensitive plain or compound word suggestion, within
-// ~1/20 sec long time consuming suggestion functions
-#define TIMELIMIT_GLOBAL (CLOCKS_PER_SEC / 4)
-#define TIMELIMIT_SUGGESTION (CLOCKS_PER_SEC / 10)
-#define TIMELIMIT (CLOCKS_PER_SEC / 20)
-#define TIMELIMIT_GLOBAL_MS std::chrono::milliseconds(TIMELIMIT_GLOBAL * 1000 / CLOCKS_PER_SEC)
-#define TIMELIMIT_SUGGESTION_MS std::chrono::milliseconds(TIMELIMIT_SUGGESTION * 1000 / CLOCKS_PER_SEC)
-#define TIMELIMIT_MS std::chrono::milliseconds(TIMELIMIT * 1000 / CLOCKS_PER_SEC)
+// timelimit: max. ~1/4 sec wall time for a suggestion, including max.
+// ~1/10 sec for a case sensitive plain or compound word suggestion,
+// within ~1/20 sec long time consuming suggestion functions
+#define TIMELIMIT_GLOBAL_MS std::chrono::milliseconds(250)
+#define TIMELIMIT_SUGGESTION_MS std::chrono::milliseconds(100)
+#define TIMELIMIT_MS std::chrono::milliseconds(50)
 #define MINTIMER 100
 #define MAXPLUSTIMER 100
 

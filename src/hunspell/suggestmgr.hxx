@@ -135,9 +135,9 @@ class SuggestMgr {
                const std::string& candidate,
                int cpdsuggest,
                int* timer,
-               clock_t* timelimit,
+               std::chrono::steady_clock::time_point* timelimit,
                int& info);
-  int checkword(const std::string& word, int, int*, clock_t*);
+  int checkword(const std::string& word, int, int*, std::chrono::steady_clock::time_point*);
   int check_forbidden(const std::string&);
 
   void capchars(std::vector<std::string>&, const std::string&, int, int&);
@@ -170,7 +170,7 @@ class SuggestMgr {
                   int,
                   const std::vector<mapentry>&,
                   int*,
-                  clock_t*,
+                  std::chrono::steady_clock::time_point*,
                   int depth,
                   int& info);
   int ngram(int n, const std::vector<w_char>& su1,

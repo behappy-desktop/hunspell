@@ -73,7 +73,6 @@
 #include <cstdio>
 #include <cctype>
 #include <chrono>
-#include <ctime>
 
 #include "suggestmgr.hxx"
 #include "hunspell.hxx"
@@ -163,7 +162,7 @@ void SuggestMgr::testsug(std::vector<std::string>& wlst,
                         const std::string& candidate,
                         int cpdsuggest,
                         int* timer,
-                        clock_t* timelimit,
+                        std::chrono::steady_clock::time_point* timelimit,
                         int& info) {
   if (wlst.size() == maxSug)
     return;
@@ -421,7 +420,7 @@ int SuggestMgr::mapchars(std::vector<std::string>& wlst,
                          const std::string& word,
                          int cpdsuggest, int& info) {
   std::string candidate;
-  clock_t timelimit;
+  std::chrono::steady_clock::time_point timelimit;
   int timer;
 
   if (word.size() < 2 || !pAMgr)
@@ -431,7 +430,7 @@ int SuggestMgr::mapchars(std::vector<std::string>& wlst,
   if (maptable.empty())
     return wlst.size();
 
-  timelimit = clock();
+  timelimit = std::chrono::steady_clock::now();
   timer = MINTIMER;
   return map_related(word, candidate, 0, wlst, cpdsuggest,
                      maptable, &timer, &timelimit, 0, info);
@@ -444,7 +443,7 @@ int SuggestMgr::map_related(const std::string& word,
                             int cpdsuggest,
                             const std::vector<mapentry>& maptable,
                             int* timer,
-                            clock_t* timelimit,
+                            std::chrono::steady_clock::time_point* timelimit,
                             int depth, int& info) {
   if (word.size() == wn) {
     if (candidate == word)
@@ -508,7 +507,7 @@ int SuggestMgr::replchars(std::vector<std::string>& wlst,
     size_t r = 0;
     // search every occurence of the pattern in the word
     while ((r = word.find(entry.pattern, r)) != std::string::npos) {
-      if (std::chrono::steady_clock::now() - replchars_start > std::chrono::milliseconds(TIMELIMIT_SUGGESTION_MS))
+      if (std::chrono::steady_clock::now() - replchars_start > TIMELIMIT_SUGGESTION_MS)
         return wlst.size();
       int type = (r == 0) ? 1 : 0;
       if (r + entry.pattern.size() == word.size())
@@ -705,7 +704,7 @@ int SuggestMgr::badchar(std::vector<std::string>& wlst,
                                const std::string& word,
                                int cpdsuggest, int& info) {
   std::string candidate(word);
-  clock_t timelimit = clock();
+  std::chrono::steady_clock::time_point timelimit = std::chrono::steady_clock::now();
   int timer = MINTIMER;
   // swap out each char one by one and try all the tryme
   // chars in its place to see if that makes a good word
@@ -730,7 +729,7 @@ int SuggestMgr::badchar_utf(std::vector<std::string>& wlst,
                             int cpdsuggest, int& info) {
   std::vector<w_char> candidate_utf(word);
   std::string candidate;
-  clock_t timelimit = clock();
+  std::chrono::steady_clock::time_point timelimit = std::chrono::steady_clock::now();
   int timer = MINTIMER;
   // swap out each char one by one and try all the tryme
   // chars in its place to see if that makes a good word
@@ -793,7 +792,7 @@ int SuggestMgr::forgotchar(std::vector<std::string>& wlst,
                            const std::string& word,
                            int cpdsuggest, int& info) {
   std::string candidate(word);
-  clock_t timelimit = clock();
+  std::chrono::steady_clock::time_point timelimit = std::chrono::steady_clock::now();
   int timer = MINTIMER;
 
   // try inserting a tryme character before every letter (and the null
@@ -816,7 +815,7 @@ int SuggestMgr::forgotchar_utf(std::vector<std::string>& wlst,
                                const std::vector<w_char>& word,
                                int cpdsuggest, int& info) {
   std::vector<w_char> candidate_utf(word);
-  clock_t timelimit = clock();
+  std::chrono::steady_clock::time_point timelimit = std::chrono::steady_clock::now();
   int timer = MINTIMER;
 
   // try inserting a tryme character at the end of the word and before every
@@ -1724,7 +1723,7 @@ void SuggestMgr::ngsuggest(std::vector<std::string>& wlst,
 int SuggestMgr::checkword(const std::string& word,
                           int cpdsuggest,
                           int* timer,
-                          clock_t* timelimit) {
+                          std::chrono::steady_clock::time_point* timelimit) {
   // check overall suggestion time limit
   if (std::chrono::steady_clock::now() - suggest_start > TIMELIMIT_SUGGESTION_MS)
     return 0;
@@ -1733,7 +1732,7 @@ int SuggestMgr::checkword(const std::string& word,
   if (timer) {
     (*timer)--;
     if (!(*timer) && timelimit) {
-      if ((clock() - *timelimit) > TIMELIMIT)
+      if (std::chrono::steady_clock::now() - *timelimit > TIMELIMIT_MS)
         return 0;
       *timer = MAXPLUSTIMER;
     }
