@@ -43,6 +43,7 @@ struct unicode_info {
 };
 
 /* fields: Unicode isletter, toupper, tolower */
+// clang-format off
 static const struct unicode_info utf_tbl[] = {
 /* 0x0000 */ { false, 0x0000, 0x0000 },
 /* 0x0001 */ { false, 0x0001, 0x0001 },
@@ -65581,3 +65582,4 @@ static const struct unicode_info utf_tbl[] = {
 /* 0xfffe */ { false, 0xfffe, 0xfffe },
 /* 0xffff */ { false, 0xffff, 0xffff },
 };
+// clang-format on

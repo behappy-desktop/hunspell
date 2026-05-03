@@ -176,6 +176,7 @@ def emit(table, out):
     out.write("};\n")
     out.write("\n")
     out.write("/* fields: Unicode isletter, toupper, tolower */\n")
+    out.write("// clang-format off\n")
     out.write("static const struct unicode_info utf_tbl[] = {\n")
     for cp, (is_letter, up, lo) in enumerate(table):
         flag = 'true' if is_letter else 'false'
@@ -183,6 +184,7 @@ def emit(table, out):
             f"/* 0x{cp:04x} */ {{ {flag}, 0x{up:04x}, 0x{lo:04x} }},\n"
         )
     out.write("};\n")
+    out.write("// clang-format on\n")
 
 
 USAGE = (
