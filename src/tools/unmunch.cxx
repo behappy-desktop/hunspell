@@ -307,7 +307,6 @@ int parse_aff_file(FILE* afflst) {
         }
         ptr = nullptr;
       }
-      nptr = nullptr;
       numents = 0;
       achar = '\0';
     }
