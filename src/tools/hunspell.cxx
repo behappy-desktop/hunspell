@@ -878,8 +878,8 @@ nextline:
                 parser->change_token(best_io.c_str());
                 // consume the replacement token to avoid re-checking it,
                 // which can cause an infinite loop if the suggestion is
-                // also misspelled
-                parser->next_token(token);
+                // also misspelled; if EOF, the outer loop will see it next
+                (void)parser->next_token(token);
                 if (filter_mode == AUTO3) {
                   fprintf(f, "%s:%d: Locate: %s | Try: %s\n", currentfilename,
                           lineno, orig_token.c_str(), best_io.c_str());
