@@ -119,8 +119,8 @@ struct guessword {
   }
 };
 
-typedef std::vector<std::string> mapentry;
-typedef std::vector<FLAG> flagentry;
+using mapentry = std::vector<std::string>;
+using flagentry = std::vector<FLAG>;
 
 struct patentry {
   std::string pattern;

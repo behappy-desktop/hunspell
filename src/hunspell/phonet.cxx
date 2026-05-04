@@ -70,7 +70,7 @@ std::string phonet(const std::string& inword, phonetable& parms) {
 
   int i, k = 0, p, z, k0, n0, p0 = -333;
   char c;
-  typedef unsigned char uchar;
+  using uchar = unsigned char;
 
   size_t len = inword.size();
   if (len > MAXPHONETUTF8LEN)
