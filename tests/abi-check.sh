@@ -24,7 +24,7 @@ if [ "$(uname -s)" != "Linux" ]; then
 fi
 
 DIR="$(dirname "$0")"
-LIB="$DIR/../src/hunspell/.libs/libhunspell-1.7.so"
+LIB="../src/hunspell/.libs/libhunspell-1.7.so"
 BASELINE="$DIR/abi-baseline.txt"
 
 if [ ! -e "$LIB" ]; then
