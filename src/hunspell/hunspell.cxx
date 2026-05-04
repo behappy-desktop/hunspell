@@ -725,8 +725,7 @@ bool HunspellImpl::spell_internal(const std::string& word, std::vector<std::stri
 
       if (j[0] == '^' && scw.compare(0, plen - 1, j, 1, plen - 1) == 0 &&
           spell(scw.substr(plen - 1), candidate_stack, nullptr, nullptr, suggest_start)) {
-        if (info)
-          *info |= SPELL_COMPOUND;
+        *info |= SPELL_COMPOUND;
         return true;
       }
 
@@ -735,8 +734,7 @@ bool HunspellImpl::spell_internal(const std::string& word, std::vector<std::stri
         std::string suffix(scw.substr(wl - plen + 1));
         scw.resize(wl - plen + 1);
         if (spell(scw, candidate_stack, nullptr, nullptr, suggest_start)) {
-          if (info)
-            *info |= SPELL_COMPOUND;
+          *info |= SPELL_COMPOUND;
           return true;
         }
         scw.append(suffix);
