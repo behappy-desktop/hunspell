@@ -452,7 +452,6 @@ size_t reverseword(std::string& word) {
 size_t reverseword_utf(std::string& word) {
   std::reverse(word.begin(), word.end()); //1st step: we reverse the string
 
-  size_t num_chars = word.size(); //in order to make sure there are enough characters at the end of the string when we process a multibyte character
   //2nd step: we process each multibyte character and reverse it
   for (auto it = word.rbegin(); it != word.rend(); ) {
     switch ((*it) & 0xf0) {
@@ -466,7 +465,6 @@ size_t reverseword_utf(std::string& word) {
       case 0x70:
         //one byte
         ++it;
-        --num_chars;
         break;
       case 0x80:
       case 0x90:
@@ -478,52 +476,45 @@ size_t reverseword_utf(std::string& word) {
                          static_cast<long>(std::distance(word.begin(), it.base()) - 1),
                          word.c_str());
         ++it;
-        --num_chars;
         break;
       case 0xc0:
       case 0xd0: {
         //two bytes
-        if (num_chars >= 2) {
+        if (std::distance(it, word.rend()) >= 2) {
           std::iter_swap(it, it + 1);
           it += 2;
-          num_chars -= 2;
         } else {
           HUNSPELL_WARNING(stderr,
                          "UTF-8 encoding error. Missing character at the end\n%s\n",
                          word.c_str());
           ++it;
-          --num_chars;
         }
         break;
       }
       case 0xe0: {
         //three bytes
-        if (num_chars >= 3) {
+        if (std::distance(it, word.rend()) >= 3) {
           std::iter_swap(it, it + 2);
           it += 3;
-          num_chars -= 3;
         } else {
           HUNSPELL_WARNING(stderr,
                          "UTF-8 encoding error. Missing character at the end\n%s\n",
                          word.c_str());
           ++it;
-          --num_chars;
         }
         break;
       }
       default: {
         // 4 or more byte UTF-8 codes
-        if (num_chars >= 4) {
+        if (std::distance(it, word.rend()) >= 4) {
           std::iter_swap(it, it + 3);
           std::iter_swap(it + 1, it + 2);
           it += 4;
-          num_chars -= 4;
         } else {
           HUNSPELL_WARNING(stderr,
                          "UTF-8 encoding error. Missing character at the end\n%s\n",
                          word.c_str());
           ++it;
-          --num_chars;
         }
         break;
       }
