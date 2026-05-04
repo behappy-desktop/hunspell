@@ -160,7 +160,6 @@ private:
                     size_t* pabbrev);
   void clean_ignore(std::string& dest, const std::string& src);
   void mkinitcap(std::string& u8);
-  void mkinitsmall(std::string& u8);
   int mkinitcap2(std::string& u8, std::vector<w_char>& u16);
   int mkinitsmall2(std::string& u8, std::vector<w_char>& u16);
   void mkallcap(std::string& u8);
@@ -993,13 +992,12 @@ std::vector<std::string> HunspellImpl::suggest(const std::string& word, std::vec
 
   // capitalize
   if (capwords) {
-    std::string initsmallword(word);
-    mkinitsmall(initsmallword);
-
     for (auto& j : slst) {
-      if (initsmallword == j)
-        continue;  // if capitalized, it would match misspelled word!
-      mkinitcap(j);
+      std::string capitalized(j);
+      mkinitcap(capitalized);
+      if (capitalized == word)
+        continue;  // capitalizing would just reproduce the misspelled word
+      j = std::move(capitalized);
     }
   }
 
@@ -1481,17 +1479,6 @@ void HunspellImpl::mkinitcap(std::string& u8) {
     std::vector<w_char> u16;
     u8_u16(u16, u8);
     ::mkinitcap_utf(u16, langnum);
-    u16_u8(u8, u16);
-  } else {
-    ::mkinitcap(u8, csconv);
-  }
-}
-
-void HunspellImpl::mkinitsmall(std::string& u8) {
-  if (utf8) {
-    std::vector<w_char> u16;
-    u8_u16(u16, u8);
-    ::mkinitsmall_utf(u16, langnum);
     u16_u8(u8, u16);
   } else {
     ::mkinitcap(u8, csconv);
