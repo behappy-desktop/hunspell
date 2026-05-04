@@ -1230,7 +1230,7 @@ std::vector<std::string> HunspellImpl::suggest_internal(const std::string& word,
         if (space) {
           size_t slen = strlen(space + 1);
           // different case after space (need capitalisation)
-          if ((slen < wl) && strcmp(scw.c_str() + wl - slen, space + 1)) {
+          if ((slen < wl) && strcmp(scw.c_str() + wl - slen, space + 1) != 0) {
             std::string first(slst[j].c_str(), space + 1);
             std::string second(space + 1);
             std::vector<w_char> w;

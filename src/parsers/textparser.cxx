@@ -96,7 +96,7 @@ int TextParser::is_wordchar(const char* w) {
 const char* TextParser::get_latin1(const char* s) {
   if (s[0] == '&') {
     unsigned int i = 0;
-    while ((i < LATIN1_LEN) && strncmp(LATIN1[i], s, strlen(LATIN1[i])))
+    while ((i < LATIN1_LEN) && strncmp(LATIN1[i], s, strlen(LATIN1[i])) != 0)
       i++;
     if (i != LATIN1_LEN)
       return LATIN1[i];
