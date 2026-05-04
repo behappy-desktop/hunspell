@@ -239,7 +239,7 @@ bool Hunzip::getline(std::string& dest) {
           if (out[outc] == 30)
             left = 9;
           else
-            left = out[outc];
+            left = static_cast<unsigned char>(out[outc]);
           linebuf[l - 1] = '\n';
           eol = 1;
         }

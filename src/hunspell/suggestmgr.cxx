@@ -2151,7 +2151,7 @@ int SuggestMgr::leftcommonsubstring(
   } else if (csconv) {
     const char* olds = s1;
     // decapitalise dictionary word
-    if ((*s1 != *s2) && (*s1 != csconv[((unsigned char)*s2)].clower))
+    if ((*s1 != *s2) && (((unsigned char)*s1) != csconv[((unsigned char)*s2)].clower))
       return 0;
     do {
       s1++;
