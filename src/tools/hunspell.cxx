@@ -1082,13 +1082,13 @@ nextline:
 #ifdef HAVE_READLINE
 
 #ifdef HAVE_CURSES_H
-static const char* rltext;
+static std::string rltext;
 
 // set base text of input line
 static int set_rltext() {
-  if (rltext) {
-    rl_insert_text(rltext);
-    rltext = nullptr;
+  if (!rltext.empty()) {
+    rl_insert_text(rltext.c_str());
+    rltext.clear();
     rl_startup_hook = (rl_hook_func_t*)nullptr;
   }
   return 0;
@@ -1358,8 +1358,8 @@ int dialog(TextParser* parser,
 
 #ifdef HAVE_READLINE
           endwin();
-          rltext = "";
-          if (rltext && *rltext)
+          rltext.clear();
+          if (!rltext.empty())
             rl_startup_hook = set_rltext;
 #endif
           char* temp = readline(gettext("Replace with: "));
@@ -1442,8 +1442,8 @@ int dialog(TextParser* parser,
 
 #ifdef HAVE_READLINE
           endwin();
-          rltext = w.c_str();
-          if (rltext && *rltext)
+          rltext = w;
+          if (!rltext.empty())
             rl_startup_hook = set_rltext;
 #endif
           char* temp = readline(gettext("New word (stem): "));
@@ -1470,8 +1470,8 @@ int dialog(TextParser* parser,
 
 #ifdef HAVE_READLINE
           endwin();
-          rltext = "";
-          if (rltext && *rltext)
+          rltext.clear();
+          if (!rltext.empty())
             rl_startup_hook = set_rltext;
 #endif
           temp = readline(gettext("Model word (a similar dictionary word): "));
