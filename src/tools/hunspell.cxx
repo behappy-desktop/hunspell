@@ -1097,7 +1097,7 @@ static int set_rltext() {
 #endif
 
 // Readline escape
-static int rl_escape(int count, int key) {
+static int rl_escape(int /*count*/, int /*key*/) {
   rl_delete_text(0, rl_end);
   rl_done = 1;
   return 0;
