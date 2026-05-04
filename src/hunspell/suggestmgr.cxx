@@ -2278,12 +2278,8 @@ char* SuggestMgr::lcs(const char* s,
     *l2 = 0;
     return NULL;
   }
-  char* c = new char[(m + 1) * (n + 1)];
-  char* b = new char[(m + 1) * (n + 1)];
-  for (i = 1; i <= m; i++)
-    c[i * (n + 1)] = 0;
-  for (j = 0; j <= n; j++)
-    c[j] = 0;
+  char* c = new char[(m + 1) * (n + 1)]();
+  char* b = new char[(m + 1) * (n + 1)]();
   for (i = 1; i <= m; i++) {
     for (j = 1; j <= n; j++) {
       if (((utf8) && (su[i - 1] == su2[j - 1])) ||
