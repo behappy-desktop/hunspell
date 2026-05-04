@@ -277,11 +277,6 @@ int AffixMgr::parse_file(const char* affpath, const char* key) {
 
   // open the affix file
   FileMgr* afflst = new FileMgr(affpath, key);
-  if (!afflst) {
-    HUNSPELL_WARNING(
-        stderr, "error: could not open affix description file %s\n", affpath);
-    return 1;
-  }
 
   // step one is to parse the affix file building up the internal
   // affix data structures

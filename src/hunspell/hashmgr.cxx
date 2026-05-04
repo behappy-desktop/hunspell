@@ -599,8 +599,6 @@ struct hentry* HashMgr::walk_hashtable(int& col, struct hentry* hp) const {
 int HashMgr::load_tables(const char* tpath, const char* key) {
   // open dictionary file
   FileMgr* dict = new FileMgr(tpath, key);
-  if (dict == nullptr)
-    return 1;
 
   // first read the first line of file to get hash table size
   std::string ts;
@@ -992,11 +990,6 @@ int HashMgr::load_config(const char* affpath, const char* key) {
 
   // open the affix file
   FileMgr* afflst = new FileMgr(affpath, key);
-  if (!afflst) {
-    HUNSPELL_WARNING(
-        stderr, "Error - could not open affix description file %s\n", affpath);
-    return 1;
-  }
 
   // read in each line ignoring any that do not
   // start with a known line type indicator
