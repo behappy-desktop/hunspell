@@ -4817,7 +4817,7 @@ std::vector<std::string> AffixMgr::get_suffix_words(short unsigned* suff,
           nw.append(ptr->getAffix());
           hentry* ht = ptr->checkword(nw, 0, nw.size(), 0, nullptr, 0, 0, 0);
           if (ht) {
-            slst.push_back(nw);
+            slst.push_back(std::move(nw));
           }
         }
         suff++;

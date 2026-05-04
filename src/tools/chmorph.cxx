@@ -92,7 +92,7 @@ int main(int, char** argv) {
             std::string r(pl[i], pos - pl[i].c_str());
             r.append(argv[5]);
             r.append(pos + strlen(argv[4]));
-            pl[i] = r;
+            pl[i] = std::move(r);
             gen = 1;
           }
         }

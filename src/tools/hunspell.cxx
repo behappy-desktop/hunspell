@@ -514,7 +514,7 @@ int putdic(const std::string& in_word, Hunspell* pMS, const char* context = null
 
   std::string buf;
   pMS->input_conv(word.c_str(), buf);
-  word = buf;
+  word = std::move(buf);
 
   if (word.empty())
     return 0;
@@ -1393,7 +1393,7 @@ int dialog(TextParser* parser,
           std::string word = (c == i_key)
                       ? token
                       : lower_first_char(token, io_enc, pMS->get_langnum());
-          dicwords.push_back(word);
+          dicwords.push_back(std::move(word));
           std::string sbuf;
           // save
           if (HOME) {
@@ -1504,7 +1504,7 @@ int dialog(TextParser* parser,
             w3.append(w2);
             w3.append("-");
             if (putdic(w3, pMS)) {
-              dicwords.push_back(w3);
+              dicwords.push_back(std::move(w3));
             }
             // save
             std::string sbuf;

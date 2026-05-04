@@ -465,7 +465,7 @@ bool HunspellImpl::spell(const std::string& word, std::vector<std::string>& cand
     if (rl) {
       std::string wspace;
       if (rl->conv(*root, wspace)) {
-        *root = wspace;
+        *root = std::move(wspace);
       }
     }
   }
@@ -588,7 +588,7 @@ bool HunspellImpl::spell_internal(const std::string& word, std::vector<std::stri
             u8_u16(part2u, part2);
             mkinitcap2(part2, part2u);
             scw = part1 + part2;
-            sunicw = part1u;
+            sunicw = std::move(part1u);
             sunicw.insert(sunicw.end(), part2u.begin(), part2u.end());
             rv = checkword(scw, info, root, suggest_start);
             if (rv)
@@ -1019,12 +1019,12 @@ std::vector<std::string> HunspellImpl::suggest(const std::string& word, std::vec
             }
             mkallsmall2(s, w);
             if (spell(s, spell_candidate_stack, nullptr, nullptr, suggest_start)) {
-              slst[l] = s;
+              slst[l] = std::move(s);
               ++l;
             } else {
               mkinitcap2(s, w);
               if (spell(s, spell_candidate_stack, nullptr, nullptr, suggest_start)) {
-                slst[l] = s;
+                slst[l] = std::move(s);
                 ++l;
               }
             }
@@ -1059,7 +1059,7 @@ std::vector<std::string> HunspellImpl::suggest(const std::string& word, std::vec
     for (size_t i = 0; i < slst.size(); ++i) {
       std::string wspace;
       if (rl->conv(slst[i], wspace)) {
-        slst[i] = wspace;
+        slst[i] = std::move(wspace);
       }
       // gh#1002: OCONV can map a generated form back to the input word
       // (e.g. "románórum" -> "romanórum" when the user typed "romanórum"),
@@ -1138,9 +1138,9 @@ std::vector<std::string> HunspellImpl::suggest_internal(const std::string& word,
   if (pAMgr && captype == NOCAP && pAMgr->get_forceucase()) {
     int info = SPELL_ORIGCAP;
     if (checkword(scw, &info, nullptr, suggest_start)) {
-      std::string form(scw);
+      std::string form(std::move(scw));
       mkinitcap(form);
-      slst.push_back(form);
+      slst.push_back(std::move(form));
       return slst;
     }
   }
@@ -1550,7 +1550,7 @@ std::vector<std::string> HunspellImpl::analyze(const std::string& word) {
     for (size_t i = 0; rl && i < slst.size(); ++i) {
       std::string wspace;
       if (rl->conv(slst[i], wspace)) {
-        slst[i] = wspace;
+        slst[i] = std::move(wspace);
       }
     }
   }
@@ -1909,7 +1909,7 @@ std::vector<std::string> HunspellImpl::get_xml_list(const std::string& list, std
     if (cw.empty()) {
       break;
     }
-    slst.push_back(cw);
+    slst.push_back(std::move(cw));
     ++pos;
   }
   return slst;
@@ -1951,7 +1951,7 @@ std::vector<std::string> HunspellImpl::spellml(const std::string& in_word) {
     }
     r.append("</code>");
     slst.clear();
-    slst.push_back(r);
+    slst.push_back(std::move(r));
     return slst;
   } else if (check_xml_par(in_word, qpos, "type=", "stem")) {
     std::string cw = get_xml_par(in_word, in_word.find('>', q2pos));
