@@ -1300,7 +1300,7 @@ int AffixMgr::cpdwordpair_check(const std::string& word, int wl) {
     std::string candidate(word, 0, wl);
     for (size_t i = 1; i < candidate.size(); i++) {
       // go to end of the UTF-8 character
-      if (utf8 && ((candidate[i] & 0xc0) == 0x80))
+      if (utf8 && is_utf8_cont(candidate[i]))
           continue;
       candidate.insert(i, 1, ' ');
       if (candidate_check(candidate))
@@ -1552,7 +1552,7 @@ void AffixMgr::setcminmax(size_t* cmin, size_t* cmax, const char* word, size_t l
   if (utf8) {
     int i;
     for (*cmin = 0, i = 0; (i < cpdmin) && *cmin < len; i++) {
-      for ((*cmin)++; *cmin < len && (word[*cmin] & 0xc0) == 0x80; (*cmin)++)
+      for ((*cmin)++; *cmin < len && is_utf8_cont(word[*cmin]); (*cmin)++)
         ;
     }
     for (*cmax = len, i = 0; (i < (cpdmin - 1)) && *cmax > 0; i++) {
@@ -1616,7 +1616,7 @@ struct hentry* AffixMgr::compound_check(const std::string& word,
   for (size_t i = cmin; i < cmax; ++i) {
     // go to end of the UTF-8 character
     if (utf8) {
-      for (; (st[i] & 0xc0) == 0x80; i++)
+      for (; is_utf8_cont(st[i]); i++)
         ;
       if (i >= cmax)
         return nullptr;
@@ -2226,7 +2226,7 @@ int AffixMgr::compound_check_morph(const std::string& word,
   for (size_t i = cmin; i < cmax; ++i) {
     // go to end of the UTF-8 character
     if (utf8) {
-      for (; (st[i] & 0xc0) == 0x80; i++)
+      for (; is_utf8_cont(st[i]); i++)
         ;
       if (i >= cmax)
         return 0;
@@ -4201,7 +4201,7 @@ bool AffixMgr::parse_maptable(const std::string& line, FileMgr* af) {
             } else {
               if (utf8 && (*k & 0xc0) == 0xc0) {
                 ++k;
-                while (k != iter && (*k & 0xc0) == 0x80)
+                while (k != iter && is_utf8_cont(*k))
                     ++k;
                 che = k;
                 --k;
