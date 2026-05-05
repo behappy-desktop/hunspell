@@ -860,7 +860,7 @@ bool SuggestMgr::twowords(std::vector<std::string>& wlst,
   for (char* p = candidate + 1; p[1] != '\0'; p++) {
     p[-1] = *p;
     // go to end of the UTF-8 character
-    while (utf8 && ((p[1] & 0xc0) == 0x80)) {
+    while (utf8 && is_utf8_cont(p[1])) {
       *p = p[1];
       p++;
     }

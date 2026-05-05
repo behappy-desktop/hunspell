@@ -290,10 +290,10 @@ int HashMgr::add_word(const std::string& in_word,
               size_t stripword = 0;
               if (utf8) {
                 while ((strippatt < ph.size()) &&
-                  ((ph.at(ph.size()-strippatt-1) & 0xc0) == 0x80))
+                  is_utf8_cont(ph.at(ph.size()-strippatt-1)))
                      ++strippatt;
                 while ((stripword < wordpart.size()) &&
-                  ((wordpart.at(wordpart.size()-stripword-1) & 0xc0) == 0x80))
+                  is_utf8_cont(wordpart.at(wordpart.size()-stripword-1)))
                      ++stripword;
               }
               ++strippatt;
