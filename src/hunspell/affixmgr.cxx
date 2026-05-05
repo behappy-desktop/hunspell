@@ -1016,20 +1016,26 @@ std::string& AffixMgr::debugflag(std::string& result, unsigned short flag) {
   return result;
 }
 
-// calculate the character length of the condition
+// Count match positions in an .aff condition pattern: each [...] group
+// counts as one, each non-grouped codepoint counts as one.
 int AffixMgr::condlen(const std::string& s) {
   int l = 0;
   bool group = false;
-  auto st = s.begin(), end = s.end();
-  while (st != end) {
-    if (*st == '[') {
+  size_t i = 0;
+  while (i < s.size()) {
+    if (s[i] == '[') {
       group = true;
-      l++;
-    } else if (*st == ']')
+      ++l;
+      ++i;
+    } else if (s[i] == ']') {
       group = false;
-    else if (!group && (!utf8 || (!(*st & 0x80) || ((*st & 0xc0) == 0x80))))
-      l++;
-    ++st;
+      ++i;
+    } else if (group) {
+      ++i;
+    } else {
+      ++l;
+      i = utf8 ? utf8_next(s, i) : i + 1;
+    }
   }
   return l;
 }
