@@ -1345,7 +1345,7 @@ int AffixMgr::cpdcase_check(const std::string& word, int pos) {
   if (utf8) {
     const char* p;
     const char* wordp = word.c_str();
-    for (p = wordp + pos - 1; p > wordp && (*p & 0xc0) == 0x80; p--)
+    for (p = wordp + pos - 1; p > wordp && is_utf8_cont(*p); p--)
       ;
     std::string pair(p);
     std::vector<w_char> pair_u;
@@ -1556,7 +1556,7 @@ void AffixMgr::setcminmax(size_t* cmin, size_t* cmax, const char* word, size_t l
         ;
     }
     for (*cmax = len, i = 0; (i < (cpdmin - 1)) && *cmax > 0; i++) {
-      for ((*cmax)--; *cmax > 0 && (word[*cmax] & 0xc0) == 0x80; (*cmax)--)
+      for ((*cmax)--; *cmax > 0 && is_utf8_cont(word[*cmax]); (*cmax)--)
         ;
     }
   } else {

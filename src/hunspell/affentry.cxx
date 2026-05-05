@@ -163,7 +163,7 @@ inline int PfxEntry::test_condition(const std::string& s) {
           p = nextchar(p);
           // skip the next character
           ++st;
-          while ((opts & aeUTF8) && st < s.size() && (s[st] & 0xc0) == 0x80)
+          while ((opts & aeUTF8) && st < s.size() && is_utf8_cont(s[st]))
             ++st;
           if (st == s.size() && p)
             return 0;  // word <= condition
@@ -514,7 +514,7 @@ inline int SfxEntry::test_condition(const char* st, const char* beg) {
         i++;
         // skip the next character
         if (!ingroup) {
-          for (; (opts & aeUTF8) && (st >= beg) && (*st & 0xc0) == 0x80; st--)
+          for (; (opts & aeUTF8) && (st >= beg) && is_utf8_cont(*st); st--)
             ;
           st--;
         }
@@ -530,7 +530,7 @@ inline int SfxEntry::test_condition(const char* st, const char* beg) {
           // dots are not metacharacters in groups: [.]
           p = nextchar(p);
           // skip the next character
-          for (st--; (opts & aeUTF8) && (st >= beg) && (*st & 0xc0) == 0x80;
+          for (st--; (opts & aeUTF8) && (st >= beg) && is_utf8_cont(*st);
                st--)
             ;
           if (st < beg) {  // word <= condition
@@ -564,7 +564,7 @@ inline int SfxEntry::test_condition(const char* st, const char* beg) {
                 break;
               }
               // first byte of the UTF-8 multibyte character
-              if ((*p & 0xc0) != 0x80)
+              if (!is_utf8_cont(*p))
                 break;
               p = nextchar(p);
               st--;
