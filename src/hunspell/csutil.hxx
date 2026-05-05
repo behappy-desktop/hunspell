@@ -140,6 +140,20 @@ LIBHUNSPELL_DLL_EXPORTED int u8_u16(std::vector<w_char>& dest,
                                     const std::string& src,
                                     bool only_convert_first_letter = false);
 
+inline bool is_utf8_cont(char c) {
+  return (static_cast<unsigned char>(c) & 0xc0) == 0x80;
+}
+
+// Unlike u8_u16, doesn't warn on malformed sequences.
+inline size_t utf8_next(const std::string& s, size_t pos) {
+  if (pos < s.size()) {
+    ++pos;
+    while (pos < s.size() && is_utf8_cont(s[pos]))
+      ++pos;
+  }
+  return pos;
+}
+
 // remove end of line char(s)
 LIBHUNSPELL_DLL_EXPORTED void mychomp(std::string& s);
 

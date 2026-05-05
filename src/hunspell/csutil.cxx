@@ -150,10 +150,6 @@ std::string& u16_u8(std::string& dest, const std::vector<w_char>& src) {
   return dest;
 }
 
-static bool is_utf8_cont(char c) {
-  return (static_cast<uint8_t>(c) & 0xc0) == 0x80;
-}
-
 static void warn_missing_cont(const std::string& src, std::string::const_iterator p) {
   HUNSPELL_WARNING(stderr,
                    "UTF-8 encoding error. Missing continuation byte in "
