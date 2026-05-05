@@ -152,11 +152,8 @@ inline int PfxEntry::test_condition(const std::string& s) {
         pos = std::string::npos;
         p = nextchar(p);
         // skip the next character
-        if (!ingroup && st < s.size()) {
-          ++st;
-          while ((opts & aeUTF8) && st < s.size() && (s[st] & 0xc0) == 0x80)
-            ++st;
-        }
+        if (!ingroup && st < s.size())
+          st = (opts & aeUTF8) ? utf8_next(s, st) : st + 1;
         if (st == s.size() && p)
           return 0;  // word <= condition
         break;
@@ -178,7 +175,7 @@ inline int PfxEntry::test_condition(const std::string& s) {
           ++st;
           p = nextchar(p);
           if ((opts & aeUTF8) && (s[st - 1] & 0x80)) {  // multibyte
-            while (p && (*p & 0xc0) == 0x80) {          // character
+            while (p && is_utf8_cont(*p)) {             // character
               if (st >= s.size() || *p != s[st]) {
                 if (pos == std::string::npos)
                   return 0;
