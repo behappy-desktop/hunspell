@@ -69,7 +69,13 @@ if [ "$MODE" = "update" ]; then
     exit 0
 fi
 
-MISSING="$(LC_ALL=C comm -23 "$BASELINE" "$CURRENT")"
+# size_t at the end of a parameter list mangles as 'm' on LP64 and 'j'
+# on ILP32; retry with the trailing letter swapped before declaring a
+# baseline symbol gone, so the check passes on 32-bit Linux too.
+MISSING="$(LC_ALL=C comm -23 "$BASELINE" "$CURRENT" | while IFS= read -r sym; do
+    alt=$(printf '%s' "$sym" | sed 's/m$/j/; t; s/j$/m/')
+    grep -qxF -- "$alt" "$CURRENT" || printf '%s\n' "$sym"
+done)"
 if [ -n "$MISSING" ]; then
     echo "abi-check: FAIL - symbols missing from current build:"
     echo "$MISSING" | sed 's/^/  /'
