@@ -127,141 +127,117 @@ void myopen(std::ifstream& stream, const char* path, std::ios_base::openmode mod
 }
 #endif
 
+// Encode a BMP-only sequence of w_char codepoints as UTF-8.
+// Each w_char represents a single 16-bit codepoint (h:l). Codepoints
+// outside the BMP are not representable here and never produced by
+// u8_u16, so the encoder only needs the 1/2/3-byte cases.
 std::string& u16_u8(std::string& dest, const std::vector<w_char>& src) {
   dest.clear();
   dest.reserve(src.size());
-  auto u2 = src.begin(), u2_max = src.end();
-  while (u2 < u2_max) {
-    signed char u8;
-    if (u2->h) {  // > 0xFF
-      // XXX 4-byte haven't implemented yet.
-      if (u2->h >= 0x08) {  // >= 0x800 (3-byte UTF-8 character)
-        u8 = 0xe0 + (u2->h >> 4);
-        dest.push_back(u8);
-        u8 = 0x80 + ((u2->h & 0xf) << 2) + (u2->l >> 6);
-        dest.push_back(u8);
-        u8 = 0x80 + (u2->l & 0x3f);
-        dest.push_back(u8);
-      } else {  // < 0x800 (2-byte UTF-8 character)
-        u8 = 0xc0 + (u2->h << 2) + (u2->l >> 6);
-        dest.push_back(u8);
-        u8 = 0x80 + (u2->l & 0x3f);
-        dest.push_back(u8);
-      }
-    } else {               // <= 0xFF
-      if (u2->l & 0x80) {  // >0x80 (2-byte UTF-8 character)
-        u8 = 0xc0 + (u2->l >> 6);
-        dest.push_back(u8);
-        u8 = 0x80 + (u2->l & 0x3f);
-        dest.push_back(u8);
-      } else {  // < 0x80 (1-byte UTF-8 character)
-        u8 = u2->l;
-        dest.push_back(u8);
-      }
+  for (const w_char& wc : src) {
+    uint16_t cp = (static_cast<uint16_t>(wc.h) << 8) | wc.l;
+    if (cp < 0x80) {
+      dest.push_back(static_cast<char>(cp));
+    } else if (cp < 0x800) {
+      dest.push_back(static_cast<char>(0xc0 | (cp >> 6)));
+      dest.push_back(static_cast<char>(0x80 | (cp & 0x3f)));
+    } else {
+      dest.push_back(static_cast<char>(0xe0 | (cp >> 12)));
+      dest.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3f)));
+      dest.push_back(static_cast<char>(0x80 | (cp & 0x3f)));
     }
-    ++u2;
   }
   return dest;
 }
 
+static bool is_utf8_cont(char c) {
+  return (static_cast<uint8_t>(c) & 0xc0) == 0x80;
+}
+
+static void warn_missing_cont(const std::string& src, std::string::const_iterator p) {
+  HUNSPELL_WARNING(stderr,
+                   "UTF-8 encoding error. Missing continuation byte in "
+                   "%ld. character position:\n%s\n",
+                   static_cast<long>(std::distance(src.begin(), p)),
+                   src.c_str());
+}
+
+// Decode UTF-8 bytes into w_char codepoints. BMP-only; a 4-byte lead
+// (codepoint >= U+10000) terminates conversion and returns -1.
+//
+// On a malformed sequence the decoder emits U+FFFD and resyncs by
+// advancing past the lead byte plus any continuation bytes already
+// validated. e.g. a 3-byte lead with valid first cont but invalid
+// second cont advances by 2; a 3-byte lead with invalid first cont
+// advances by 1.
 int u8_u16(std::vector<w_char>& dest, const std::string& src, bool only_convert_first_letter) {
   // faster to oversize initially, assign to elements and resize to what's used
   // than to reserve and push_back
   dest.resize(only_convert_first_letter ? 1 : src.size());
-  auto u16 = dest.begin();
-  auto u8 = src.begin(), u8_max = src.end();
+  auto out = dest.begin();
+  auto p = src.begin(), end = src.end();
 
-  while (u8 < u8_max) {
-    w_char u2;
-    switch ((*u8) & 0xf0) {
-      case 0x00:
-      case 0x10:
-      case 0x20:
-      case 0x30:
-      case 0x40:
-      case 0x50:
-      case 0x60:
-      case 0x70: {
-        u2.h = 0;
-        u2.l = *u8;
-        break;
+  while (p < end) {
+    uint8_t b0 = static_cast<uint8_t>(*p);
+    uint16_t cp;
+
+    if (b0 < 0x80) {
+      // 1-byte ASCII
+      cp = b0;
+    } else if (b0 < 0xc0) {
+      // continuation byte at lead position
+      HUNSPELL_WARNING(stderr,
+                       "UTF-8 encoding error. Unexpected continuation bytes "
+                       "in %ld. character position\n%s\n",
+                       static_cast<long>(std::distance(src.begin(), p)),
+                       src.c_str());
+      cp = 0xfffd;
+    } else if (b0 < 0xe0) {
+      // 2-byte sequence: 110xxxxx 10yyyyyy
+      if (p + 1 < end && is_utf8_cont(p[1])) {
+        cp = ((b0 & 0x1f) << 6) | (static_cast<uint8_t>(p[1]) & 0x3f);
+        ++p;  // step past lead; loop bottom steps past cont
+      } else {
+        warn_missing_cont(src, p);
+        cp = 0xfffd;
       }
-      case 0x80:
-      case 0x90:
-      case 0xa0:
-      case 0xb0: {
-        HUNSPELL_WARNING(stderr,
-                         "UTF-8 encoding error. Unexpected continuation bytes "
-                         "in %ld. character position\n%s\n",
-                         static_cast<long>(std::distance(src.begin(), u8)),
-                         src.c_str());
-        u2.h = 0xff;
-        u2.l = 0xfd;
-        break;
-      }
-      case 0xc0:
-      case 0xd0: {  // 2-byte UTF-8 codes
-        if (u8 + 1 < u8_max && (*(u8 + 1) & 0xc0) == 0x80) {
-          u2.h = (*u8 & 0x1f) >> 2;
-          u2.l = (static_cast<unsigned char>(*u8) << 6) + (*(u8 + 1) & 0x3f);
-          ++u8;
+    } else if (b0 < 0xf0) {
+      // 3-byte sequence: 1110xxxx 10yyyyyy 10zzzzzz
+      if (p + 1 < end && is_utf8_cont(p[1])) {
+        uint8_t b1 = static_cast<uint8_t>(p[1]);
+        ++p;  // step past lead
+        if (p + 1 < end && is_utf8_cont(p[1])) {
+          cp = ((b0 & 0x0f) << 12) | ((b1 & 0x3f) << 6) | (static_cast<uint8_t>(p[1]) & 0x3f);
+          ++p;  // step past first cont; loop bottom steps past second cont
         } else {
-          HUNSPELL_WARNING(stderr,
-                           "UTF-8 encoding error. Missing continuation byte in "
-                           "%ld. character position:\n%s\n",
-                           static_cast<long>(std::distance(src.begin(), u8)),
-                           src.c_str());
-          u2.h = 0xff;
-          u2.l = 0xfd;
+          warn_missing_cont(src, p);
+          cp = 0xfffd;
         }
-        break;
+      } else {
+        warn_missing_cont(src, p);
+        cp = 0xfffd;
       }
-      case 0xe0: {  // 3-byte UTF-8 codes
-        if (u8 + 1 < u8_max && (*(u8 + 1) & 0xc0) == 0x80) {
-          u2.h = ((*u8 & 0x0f) << 4) + ((*(u8 + 1) & 0x3f) >> 2);
-          ++u8;
-          if (u8 + 1 < u8_max && (*(u8 + 1) & 0xc0) == 0x80) {
-            u2.l = (static_cast<unsigned char>(*u8) << 6) + (*(u8 + 1) & 0x3f);
-            ++u8;
-          } else {
-            HUNSPELL_WARNING(stderr,
-                             "UTF-8 encoding error. Missing continuation byte "
-                             "in %ld. character position:\n%s\n",
-                             static_cast<long>(std::distance(src.begin(), u8)),
-                             src.c_str());
-            u2.h = 0xff;
-            u2.l = 0xfd;
-          }
-        } else {
-          HUNSPELL_WARNING(stderr,
-                           "UTF-8 encoding error. Missing continuation byte in "
-                           "%ld. character position:\n%s\n",
-                           static_cast<long>(std::distance(src.begin(), u8)),
-                           src.c_str());
-          u2.h = 0xff;
-          u2.l = 0xfd;
-        }
-        break;
-      }
-      default: {  // 4 or more byte UTF-8 codes
-        assert(((*u8) & 0xf0) == 0xf0 && "can only be 0xf0");
-        HUNSPELL_WARNING(stderr,
-                         "This UTF-8 encoding can't convert to UTF-16:\n%s\n",
-                         src.c_str());
-        u2.h = 0xff;
-        u2.l = 0xfd;
-        *u16++ = u2;
-        dest.resize(u16 - dest.begin());
-        return -1;
-      }
+    } else {
+      // 4+ byte lead: codepoint >= U+10000, can't fit in w_char
+      HUNSPELL_WARNING(stderr,
+                       "This UTF-8 encoding can't convert to UTF-16:\n%s\n",
+                       src.c_str());
+      out->h = 0xff;
+      out->l = 0xfd;
+      ++out;
+      dest.resize(out - dest.begin());
+      return -1;
     }
-    *u16++ = u2;
+
+    out->h = static_cast<unsigned char>(cp >> 8);
+    out->l = static_cast<unsigned char>(cp);
+    ++out;
     if (only_convert_first_letter)
-        break;
-    ++u8;
+      break;
+    ++p;  // consume lead byte
   }
 
-  int size = u16 - dest.begin();
+  int size = static_cast<int>(out - dest.begin());
   dest.resize(size);
   return size;
 }
