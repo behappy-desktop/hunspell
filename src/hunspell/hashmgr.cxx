@@ -618,8 +618,8 @@ int HashMgr::load_tables(const char* tpath, const char* key) {
 
   const int nExtra = 5 + USERWORD;
 #if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
-  // ~10x the largest practical dictionary
-  const int max_allowed = 1000000;
+  // covers full-form uncompressed dictionaries (~7M for uk_UA expanded)
+  const int max_allowed = 10000000;
 #else
   const int max_allowed = (10000 - 1 - nExtra) / int(sizeof(struct hentry*));
 #endif
