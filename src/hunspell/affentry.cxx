@@ -160,13 +160,11 @@ inline int PfxEntry::test_condition(const std::string& s) {
       }
       case '.':
         if (pos == std::string::npos) {  // dots are not metacharacters in groups: [.]
+          if (st == s.size())
+            return 0;  // dot has no character to match
           p = nextchar(p);
           // skip the next character
-          ++st;
-          while ((opts & aeUTF8) && st < s.size() && is_utf8_cont(s[st]))
-            ++st;
-          if (st == s.size() && p)
-            return 0;  // word <= condition
+          st = (opts & aeUTF8) ? utf8_next(s, st) : st + 1;
           break;
         }
       /* FALLTHROUGH */

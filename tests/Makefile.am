@@ -149,6 +149,7 @@ ignoresug.dic \
 limit-multiple-compounding.dic \
 iconv_break_overflow.dic \
 gh1076.dic \
+pfxdot.dic \
 gh1032.test \
 gh1058.test \
 gh1002.dic \
@@ -727,6 +728,10 @@ gh1076.aff \
 gh1076.dic \
 gh1076.good \
 gh1076.wrong \
+pfxdot.aff \
+pfxdot.dic \
+pfxdot.good \
+pfxdot.wrong \
 ofz51432.aff \
 ofz51432.dic \
 ofz51432.test \
