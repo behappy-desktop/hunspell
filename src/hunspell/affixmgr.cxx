@@ -3168,7 +3168,7 @@ std::string AffixMgr::affix_check_morph(const std::string& word,
 // return 1, if inputs may equal with a secondary suffix
 // otherwise return -1
 static int morphcmp(const char* s, const char* t) {
-  int se = 0, te = 0;
+  bool se = false, te = false;
   const char* sl;
   const char* tl;
   const char* olds;
@@ -3194,8 +3194,8 @@ static int morphcmp(const char* s, const char* t) {
   while (s && t && (!sl || sl > s) && (!tl || tl > t)) {
     s += MORPH_TAG_LEN;
     t += MORPH_TAG_LEN;
-    se = 0;
-    te = 0;
+    se = false;
+    te = false;
     while ((*s == *t) && !se && !te) {
       s++;
       t++;
@@ -3204,14 +3204,14 @@ static int morphcmp(const char* s, const char* t) {
         case '\n':
         case '\t':
         case '\0':
-          se = 1;
+          se = true;
       }
       switch (*t) {
         case ' ':
         case '\n':
         case '\t':
         case '\0':
-          te = 1;
+          te = true;
       }
     }
     if (!se || !te) {
