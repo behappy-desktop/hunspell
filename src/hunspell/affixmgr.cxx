@@ -3196,6 +3196,12 @@ static int morphcmp(const char* s, const char* t) {
     t += MORPH_TAG_LEN;
     se = false;
     te = false;
+    // both values empty: matched at the shared field terminator.
+    // skip the inner loop, which would step past the '\0'.
+    if (*s == '\0' && *t == '\0') {
+      se = true;
+      te = true;
+    }
     while ((*s == *t) && !se && !te) {
       s++;
       t++;
