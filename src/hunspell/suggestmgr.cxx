@@ -1744,7 +1744,7 @@ int SuggestMgr::checkword(const std::string& word,
     if (cpdsuggest >= 1) {
       if (pAMgr->get_compound()) {
         struct hentry* rv2 = nullptr;
-        struct hentry* rwords[100];  // buffer for COMPOUND pattern checking
+        struct hentry* rwords[100] = {};  // buffer for COMPOUND pattern checking
         int info = (cpdsuggest == 1) ? SPELL_COMPOUND_2 : 0;
         rv = pAMgr->compound_check(word, 0, 0, 100, 0, nullptr, (hentry**)&rwords, 0, 1, &info);  // EXT
         // TODO filter 3-word or more compound words, as in spell()
@@ -1873,7 +1873,7 @@ std::string SuggestMgr::suggest_morph(const std::string& in_w) {
   }
 
   if (pAMgr->get_compound() && result.empty()) {
-    struct hentry* rwords[100];  // buffer for COMPOUND pattern checking
+    struct hentry* rwords[100] = {};  // buffer for COMPOUND pattern checking
     pAMgr->compound_check_morph(w, 0, 0, 100, 0, nullptr, (hentry**)&rwords, 0, result, nullptr);
   }
 
