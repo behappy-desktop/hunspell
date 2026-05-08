@@ -1585,6 +1585,11 @@ std::vector<std::string> HunspellImpl::analyze_internal(const std::string& word)
       wl = cleanword2(scw, sunicw, wspace, &captype, &abbv);
     else
       wl = cleanword2(scw, sunicw, word, &captype, &abbv);
+
+#if defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+    if (wl > 32768)
+      return slst;
+#endif
   }
 
   if (wl == 0) {
